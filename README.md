@@ -14,8 +14,8 @@ A basic Couette flow simulation written in [Basilisk C](http://basilisk.fr/). Pl
 
 ## Plots
 
-![](plot1.png)
-![](plot2.png)
+![Plot of convergence of speed at midpoint of couette flow (Re=100) at different grid levels](plot1.png)
+![Detail plot of convergence of speed at midpoint of couette flow (Re=100) at different grid levels](plot2.png)
 
 ---
 
@@ -28,4 +28,4 @@ A basic Couette flow simulation written in [Basilisk C](http://basilisk.fr/). Pl
 `t = 5.8`
 
 ![t=11.5](3.png)
-`t=11.5`
+`t = 11.5`

@@ -47,6 +47,7 @@ event logfile (t+= 0.1; t <= 140) {
   // generate statistics
   stats s = statsf(speed);
 
+  // log to stderr
   Point point = locate(4., 0.5); // midpoint
   // last value is speed at the midpoint
   fprintf (ferr, "%g %d %g %g %g %g %g\n", t, i, dt, s.sum, s.max, s.min, speed[]);

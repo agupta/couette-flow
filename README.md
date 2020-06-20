@@ -8,7 +8,7 @@ A basic Couette flow simulation written in [Basilisk C](http://basilisk.fr/). Pl
 
 1. Modify `MAX_LEVEL` in `couette.c` according to your hardware to find an appropriate balance between accuracy and speed.
 2. Ensure ImageMagick and Basilisk is installed on your system.
-3. Run 'run.sh' to obtain an animation.
+3. Run 'run.sh' to obtain an animation of the speed field.
 
 ---
 

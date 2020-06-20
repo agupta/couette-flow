@@ -1,39 +1,53 @@
 #include "navier-stokes/centered.h"
-#define MAX_LEVEL 7
+
+#define MAX_LEVEL 8
 
 int main () {
   init_grid(1 << MAX_LEVEL);
-  // key for stderr log
-  fprintf(ferr, "t, i, dt, s.sum, s.max, s.min\n");
+  size(8); // scale the grid up by a factor of 8
   run();
 }
 
 event init(t = 0) {
-  mu = fm; // set viscosity to unity
+  // set viscosity to 1/Re
+  double Re = 100.;
+  const face vector muc[] = {1./Re,1./Re};
+  mu = muc;
 
   // flow out of the right -> into the left
   periodic(right);
 
-  // funky initial condition for demo purposes
-  // change to 0 everywhere and add boundary condition
-
+  // initially velocity is 0 everywhere
   foreach () {
-    u.x[] = (y>0.5) ? 1. : 0.;
+    u.x[] = 0.;
     u.y[] = 0.;
   }
+  // cut the top 7/8 out of our domain to obtain a 8:1 rectangle
+  mask (y > 1 ? top : none);
+  
+  // boundary conditions
+  u.t[top] = dirichlet(1.);
+  u.t[bottom] = dirichlet(0.);
 }
 
-event movie (t += 0.01; t<=0.25) {
+event movie (t += 0.1; t <= 140) {
+  // compute the speed
   scalar speed[];
   foreach ()
     speed[] = sqrt(sq(u.x[]) + sq(u.y[])); // L2
-  output_ppm(speed, linear = true); // output to stdout
+  
+  output_ppm(speed, box = {{0.,0.},{8.,1.}},linear = true); // output to stdout
 }
 
-event logfile(t <= 0.25; t+= 0.01) {
+event logfile (t+= 0.1; t <= 140) {
+  // compute the speed
   scalar speed[];
   foreach ()
     speed[] = sqrt(sq(u.x[]) + sq(u.y[])); // L2
+  // generate statistics
   stats s = statsf(speed);
-  fprintf (ferr, "%g %d %g %g %g %g\n", t, i, dt, s.sum, s.max, s.min);
+
+  Point point = locate(4., 0.5); // midpoint
+  // last value is speed at the midpoint
+  fprintf (ferr, "%g %d %g %g %g %g %g\n", t, i, dt, s.sum, s.max, s.min, speed[]);
 }

@@ -2,7 +2,8 @@
 
 rm -rf out/
 mkdir out
-qcc couette_.c -O2 -lm -o out/couette
+qcc couette.c -O2 -lm -o out/couette
 cd out
-./couette > speed.ppm
-display speed.ppm
+./couette > speed.ppm 2>flow.log
+tail -n1 speed.ppm
+animate speed.ppm

@@ -1,4 +1,5 @@
 #include "navier-stokes/centered.h"
+#include "view.h"
 
 #define MAX_LEVEL 8
 
@@ -30,16 +31,25 @@ event init(t = 0) {
   u.t[bottom] = dirichlet(0.);
 }
 
-event movie (t += 0.1; t <= 300) {
-  // compute the speed
-  scalar speed[];
-  foreach ()
-    speed[] = sqrt(sq(u.x[]) + sq(u.y[])); // L2
+// event movie (t += 0.1; t <= 300) {
+//   // compute the speed
+//   scalar speed[];
+//   foreach ()
+//     speed[] = sqrt(sq(u.x[]) + sq(u.y[])); // L2
   
-  output_ppm(speed, box = {{0.,0.},{8.,1.}}, linear = true); // output to stdout
+//   output_ppm(speed, box = {{0.,0.},{8.,1.}}, linear = true); // output to stdout
+// }
+
+event animationU (t += 0.05; t <= 5 ){
+  view (fov = 100.0, tx = 0.0, ty = 0.0, width = 1600, height = 400, quat = {0, 0, 0.0, 0.0});
+  clear();
+  squares ("u.x", spread = -1, linear = true, map = cool_warm );
+  draw_vof ("f", lc = {0.0,0.0,0.0}, lw=1);
+  // box();
+  save ("HorizontalVelocity.mp4");
 }
 
-event logfile (t+= 0.1; t <= 300) {
+event logfile (t+= 0.05; t <= 5) {
   // compute the speed
   scalar speed[];
   foreach ()

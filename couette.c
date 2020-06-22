@@ -30,26 +30,36 @@ event init(t = 0) {
   u.t[bottom] = dirichlet(0.);
 }
 
-event movie (t += 0.1; t <= 140) {
+event movie (t += 0.1; t <= 300) {
   // compute the speed
   scalar speed[];
   foreach ()
     speed[] = sqrt(sq(u.x[]) + sq(u.y[])); // L2
   
-  output_ppm(speed, box = {{0.,0.},{8.,1.}},linear = true); // output to stdout
+  output_ppm(speed, box = {{0.,0.},{8.,1.}}, linear = true); // output to stdout
 }
 
-event logfile (t+= 0.1; t <= 140) {
+event logfile (t+= 0.1; t <= 300) {
   // compute the speed
   scalar speed[];
   foreach ()
-    speed[] = sqrt(sq(u.x[]) + sq(u.y[])); // l2
+    speed[] = norm(u); // l2
   // generate statistics
   stats s = statsf(speed);
 
-  // log to stderr
-  Point point = locate(4., 0.5); // midpoint
+  Point point = interpolate(4., 0.5); // midpoint
   double mid = speed[]; // speed at midpoint
   
-  fprintf (ferr, "%g %d %g %g %g %g %g\n", t, i, dt, s.sum, s.max, s.min, mid);
+
+  // generate L2 norm of a vertical slice
+  double slice_norm = 0.;
+  for (int i = 0; i < (1 << (MAX_LEVEL - 3)); i++) {
+    double yp = (double)i / (double)(1 << (MAX_LEVEL - 3));
+    point = locate(4., yp);
+    slice_norm += fabs(speed[]);
+  }
+  slice_norm /= (double)(1 << (MAX_LEVEL - 3)); // rescale
+  
+  // log to stderr
+  fprintf (ferr, "%g %d %g %g %g %g %g %g\n", t, i, dt, s.sum, s.max, s.min, mid, slice_norm);
 }

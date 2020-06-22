@@ -47,7 +47,7 @@ event logfile (t+= 0.1; t <= 300) {
   // generate statistics
   stats s = statsf(speed);
 
-  Point point = interpolate(4., 0.5); // midpoint
+  Point point = locate(4., 0.5); // midpoint
   double mid = speed[]; // speed at midpoint
   
 
